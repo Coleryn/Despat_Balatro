@@ -1,5 +1,11 @@
-#include "PokerHandChecker.h"
+#pragma once
+#include "Hand.h"
 
-void PokerHandChecker::setNext(PokerHandChecker* next) {
-    nextChecker = next;
-}
+class PokerHandChecker {
+public:
+    virtual bool check(const Hand& hand) = 0;
+    void setNext(PokerHandChecker* next);
+
+protected:
+    PokerHandChecker* nextChecker = nullptr;
+};
