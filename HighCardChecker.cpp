@@ -1,7 +1,7 @@
-#include <iostream>
 #include "HighCardChecker.h"
+#include <iostream>
 
-bool HighCardChecker::check(const Hand& hand) {
+HandRank HighCardChecker::check(const Hand& hand) {
     std::cout << "Detected HIGH CARD\n";
-    return true; // always true, last resort fallback
+    return HandRank::HIGH_CARD;
 }

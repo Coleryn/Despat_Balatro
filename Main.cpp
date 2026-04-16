@@ -1,5 +1,8 @@
-#include "GameManager.h"
+#include <iostream>
+#include <string>
 #include "Hand.h"
+#include "HandGenerator.h"
+#include "HandRank.h"
 #include "FlushFiveChecker.h"
 #include "FlushHouseChecker.h"
 #include "FiveOfAKindChecker.h"
@@ -14,21 +17,29 @@
 #include "PairChecker.h"
 #include "HighCardChecker.h"
 
+std::string rankToStr(int r) {
+    if (r == 11) return "J";
+    if (r == 12) return "Q";
+    if (r == 13) return "K";
+    if (r == 14) return "A";
+    return std::to_string(r);
+}
+
 int main() {
-    // Build the chain (highest priority first)
-    FlushFiveChecker    flushFive;
-    FlushHouseChecker   flushHouse;
-    FiveOfAKindChecker  fiveOfAKind;
-    RoyalFlushChecker   royalFlush;
+    // build chain
+    FlushFiveChecker     flushFive;
+    FlushHouseChecker    flushHouse;
+    FiveOfAKindChecker   fiveOfAKind;
+    RoyalFlushChecker    royalFlush;
     StraightFlushChecker straightFlush;
-    FourOfAKindChecker  fourOfAKind;
-    FullHouseChecker    fullHouse;
-    FlushChecker        flush;
-    StraightChecker     straight;
-    ThreeOfAKindChecker threeOfAKind;
-    TwoPairChecker      twoPair;
-    PairChecker         pair;
-    HighCardChecker     highCard;
+    FourOfAKindChecker   fourOfAKind;
+    FullHouseChecker     fullHouse;
+    FlushChecker         flush;
+    StraightChecker      straight;
+    ThreeOfAKindChecker  threeOfAKind;
+    TwoPairChecker       twoPair;
+    PairChecker          pair;
+    HighCardChecker      highCard;
 
     flushFive.setNext(&flushHouse);
     flushHouse.setNext(&fiveOfAKind);
@@ -43,13 +54,21 @@ int main() {
     twoPair.setNext(&pair);
     pair.setNext(&highCard);
 
-    // Start the chain with a dummy hand
-    Hand hand;
-    flushFive.check(hand);
+    // generate hand
+    HandGenerator generator;
+    Hand hand = generator.generateHand();
 
-    // Run the game
-    GameManager gameManager;
-    gameManager.runSession();
+    // print kartu
+    std::cout << "Cards dealt: ";
+    for (int i = 0; i < hand.size(); i++) {
+        Card c = hand.getCard(i);
+        std::cout << rankToStr(c.rank) << c.suit;
+        if (i < hand.size()-1) std::cout << " ";
+    }
+    std::cout << "\n";
+
+    // jalankan chain
+    flushFive.check(hand);
 
     return 0;
 }

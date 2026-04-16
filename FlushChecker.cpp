@@ -1,8 +1,13 @@
-#include <iostream>
 #include "FlushChecker.h"
+#include <iostream>
 
-bool FlushChecker::check(const Hand& hand) {
+HandRank FlushChecker::check(const Hand& hand) {
+    char suit = hand.getCard(0).suit;
+    for (int i = 1; i < hand.size(); i++)
+        if (hand.getCard(i).suit != suit) {
+            if (nextChecker) return nextChecker->check(hand);
+            return HandRank::UNKNOWN;
+        }
     std::cout << "Detected FLUSH\n";
-    if (nextChecker) return nextChecker->check(hand);
-    return false;
+    return HandRank::FLUSH;
 }
