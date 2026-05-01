@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "Hand.h"
+#include "ChosenHand.h"
 #include "HandGenerator.h"
 #include "HandRank.h"
 #include "FlushFiveChecker.h"
@@ -16,6 +17,7 @@
 #include "TwoPairChecker.h"
 #include "PairChecker.h"
 #include "HighCardChecker.h"
+#include "HandPlayer.h"
 
 std::string rankToStr(int r) {
     if (r == 11) return "J";
@@ -57,18 +59,20 @@ int main() {
     // generate hand
     HandGenerator generator;
     Hand hand = generator.generateHand();
+    HandPlayer handPlayer;
+    ChosenHand chosenHand = handPlayer.playHand(hand);
 
     // print kartu
     std::cout << "Cards dealt: ";
-    for (int i = 0; i < hand.size(); i++) {
-        Card c = hand.getCard(i);
+    for (int i = 0; i < chosenHand.size(); i++) {
+        Card c = chosenHand.getCard(i);
         std::cout << rankToStr(c.rank) << c.suit;
-        if (i < hand.size()-1) std::cout << " ";
+        if (i < chosenHand.size()-1) std::cout << " ";
     }
     std::cout << "\n";
 
     // jalankan chain
-    flushFive.check(hand);
+    flushFive.check(chosenHand.getHand());
 
     return 0;
 }

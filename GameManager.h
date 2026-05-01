@@ -1,6 +1,7 @@
 #pragma once 
 #include "HandGenerator.h" 
 #include "HandPlayer.h" 
+#include "ChosenHand.h"
 #include "ScoringRule.h" 
 #include "BlindRule.h" 
 #include "RewardRule.h" 
