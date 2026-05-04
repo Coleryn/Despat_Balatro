@@ -3,8 +3,10 @@
 #include "Hand.h"
 #include <vector>
 
-class HandGenerator {
+class HandGenerator
+{
 public:
+    Hand generateHand();
     void buildDeck();
     void shuffleDeck();
     std::vector<Card> deal(int n);

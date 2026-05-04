@@ -1,14 +1,27 @@
-#include "HandGenerator.h"
-#include <algorithm>
+#include <iostream>
 #include <random>
-#include <stdexcept>
+#include <algorithm>
+#include "HandGenerator.h"
+
+Hand HandGenerator::generateHand()
+{
+    std::cout << "Generating hand...\n";
+    buildDeck();
+    shuffleDeck();
+    std::vector<Card> cards = deal(8);
+    Hand hand;
+    for (const auto& c : cards) {
+        hand.addCard(c);
+    }
+    return hand;
+}
 
 void HandGenerator::buildDeck() {
     deck.clear();
-    char suits[] = {'H', 'D', 'C', 'S'};
-    for (char suit : suits) {
+    char suits[4] = {'H', 'D', 'C', 'S'};
+    for (int s = 0; s < 4; s++) {
         for (int rank = 2; rank <= 14; rank++) {
-            deck.push_back({rank, suit});
+            deck.push_back({rank, suits[s]});
         }
     }
 }
@@ -22,7 +35,7 @@ void HandGenerator::shuffleDeck() {
 std::vector<Card> HandGenerator::deal(int n) {
     if ((int)deck.size() < n)
         throw std::runtime_error("Not enough cards in deck");
-    std::vector<Card> hand(deck.begin(), deck.begin() + n);
+    std::vector<Card> dealt(deck.begin(), deck.begin() + n);
     deck.erase(deck.begin(), deck.begin() + n);
-    return hand;
+    return dealt;
 }

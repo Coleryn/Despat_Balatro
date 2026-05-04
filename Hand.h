@@ -1,10 +1,6 @@
 #pragma once
 #include <vector>
-
-struct Card {
-    int rank;  // 2–14
-    char suit; // 'H', 'D', 'C', 'S'
-};
+#include "Card.h"
 
 class Hand {
 public:
