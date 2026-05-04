@@ -1,22 +1,14 @@
 #pragma once
+#include "Card.h"
 #include "Hand.h"
+#include <vector>
 
 class HandGenerator {
 public:
-    Hand generateHand();
+    void buildDeck();
+    void shuffleDeck();
+    std::vector<Card> deal(int n);
 
 private:
-    Hand makePair();
-    Hand makeTwoPair();
-    Hand makeThreeOfAKind();
-    Hand makeStraight();
-    Hand makeFlush();
-    Hand makeFullHouse();
-    Hand makeFourOfAKind();
-    Hand makeStraightFlush();
-    Hand makeRoyalFlush();
-    Hand makeFiveOfAKind();
-    Hand makeFlushHouse();
-    Hand makeFlushFive();
-    Hand makeHighCard();
+    std::vector<Card> deck;
 };
