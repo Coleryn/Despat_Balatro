@@ -35,7 +35,8 @@ void RunSessionService::runSessionLoop() {
 }
 
 bool RunSessionService::isSessionEnded() {
-    return state.currentScore >= config.minimumScore || config.remainingPlays == 0;
+    return blindRule.isCleared(state.currentScore, config.minimumScore)
+        || config.remainingPlays == 0;
 }
 
 PlayerActionRequest RunSessionService::readPlayerActionRequest() {
@@ -85,10 +86,15 @@ void RunSessionService::processDiscardAction(const std::vector<int>& selectedInd
 
 void RunSessionService::printSessionStatus() {
     gameManager.printGeneratedHand(state.handState);
+    std::cout << "Blind requirement: " << config.minimumScore << "\n";
     std::cout << "Remaining plays: " << config.remainingPlays << ", Remaining discards: " << config.remainingDiscards << "\n";
     std::cout << "Current score: " << state.currentScore << "\n";
 }
 
 void RunSessionService::printSessionResult() {
+    const bool clearedBlind = blindRule.isCleared(state.currentScore, config.minimumScore);
+
     std::cout << "Session ended. Final score: " << state.currentScore << "\n";
+    std::cout << "Blind requirement: " << config.minimumScore << "\n";
+    std::cout << "Result: " << (clearedBlind ? "WIN" : "LOSE") << "\n";
 }
