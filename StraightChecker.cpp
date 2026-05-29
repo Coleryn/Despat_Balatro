@@ -1,17 +1,39 @@
 #include "StraightChecker.h"
-#include <iostream>
-#include <vector>
-#include <algorithm>
 
-HandRank StraightChecker::check(const Hand& hand) {
+#include <algorithm>
+#include <vector>
+
+bool StraightChecker::checkPokerHand(const std::vector<Card>& cards) const {
+    if (cards.size() != 5) {
+        return false;
+    }
+
     std::vector<int> ranks;
-    for (int i = 0; i < hand.size(); i++) ranks.push_back(hand.getCard(i).rank);
+    ranks.reserve(cards.size());
+
+    for (const Card& card : cards) {
+        ranks.push_back(card.getRankValue());
+    }
+
     std::sort(ranks.begin(), ranks.end());
-    for (int i = 1; i < ranks.size(); i++)
-        if (ranks[i] != ranks[i-1]+1) {
-            if (nextChecker) return nextChecker->check(hand);
-            return HandRank::UNKNOWN;
+    if (std::adjacent_find(ranks.begin(), ranks.end()) != ranks.end()) {
+        return false;
+    }
+
+    const std::vector<int> aceLowStraight = {2, 3, 4, 5, 14};
+    if (ranks == aceLowStraight) {
+        return true;
+    }
+
+    for (std::size_t i = 1; i < ranks.size(); ++i) {
+        if (ranks[i] != ranks[i - 1] + 1) {
+            return false;
         }
-    std::cout << "Detected STRAIGHT\n";
-    return HandRank::STRAIGHT;
+    }
+
+    return true;
+}
+
+PokerHandType StraightChecker::getHandType() const {
+    return PokerHandType::Straight;
 }

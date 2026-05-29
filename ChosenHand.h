@@ -1,15 +1,18 @@
 #pragma once
-#include "Hand.h"
+
+#include "Card.h"
+
+#include <vector>
 
 class ChosenHand {
 public:
-    void addCard(Card card);
-    void setHand(const Hand& hand);
-    const Hand& getHand() const;
-    int size() const;
-    Card getCard(int index) const;
+    void addCard(const Card& card);
+    void removeCardAt(int index);
     void clear();
 
+    const std::vector<Card>& getSelectedCards() const;
+    int size() const;
+
 private:
-    Hand hand;
+    std::vector<Card> selectedCards;
 };

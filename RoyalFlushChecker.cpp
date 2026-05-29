@@ -1,19 +1,31 @@
 #include "RoyalFlushChecker.h"
-#include <iostream>
-#include <set>
 
-HandRank RoyalFlushChecker::check(const Hand& hand) {
-    char suit = hand.getCard(0).suit;
-    std::set<int> ranks;
-    for (int i = 0; i < hand.size(); i++) {
-        if (hand.getCard(i).suit != suit) {
-            if (nextChecker) return nextChecker->check(hand);
-            return HandRank::UNKNOWN;
-        }
-        ranks.insert(hand.getCard(i).rank);
+#include "FlushChecker.h"
+
+#include <algorithm>
+#include <vector>
+
+bool RoyalFlushChecker::checkPokerHand(const std::vector<Card>& cards) const {
+    if (cards.size() != 5) {
+        return false;
     }
-    std::set<int> royal = {10,11,12,13,14};
-    if (ranks == royal) { std::cout << "Detected ROYAL FLUSH\n"; return HandRank::ROYAL_FLUSH; }
-    if (nextChecker) return nextChecker->check(hand);
-    return HandRank::UNKNOWN;
+
+    FlushChecker flushChecker;
+    if (!flushChecker.checkPokerHand(cards)) {
+        return false;
+    }
+
+    std::vector<int> ranks;
+    ranks.reserve(cards.size());
+
+    for (const Card& card : cards) {
+        ranks.push_back(card.getRankValue());
+    }
+
+    std::sort(ranks.begin(), ranks.end());
+    return ranks == std::vector<int>{10, 11, 12, 13, 14};
+}
+
+PokerHandType RoyalFlushChecker::getHandType() const {
+    return PokerHandType::RoyalFlush;
 }

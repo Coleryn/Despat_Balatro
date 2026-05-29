@@ -1,13 +1,22 @@
 #include "FlushChecker.h"
-#include <iostream>
 
-HandRank FlushChecker::check(const Hand& hand) {
-    char suit = hand.getCard(0).suit;
-    for (int i = 1; i < hand.size(); i++)
-        if (hand.getCard(i).suit != suit) {
-            if (nextChecker) return nextChecker->check(hand);
-            return HandRank::UNKNOWN;
+#include "PokerUtils.h"
+
+bool FlushChecker::checkPokerHand(const std::vector<Card>& cards) const {
+    if (cards.size() != 5) {
+        return false;
+    }
+
+    const auto suitCount = countSuits(cards);
+    for (const auto& entry : suitCount) {
+        if (entry.second == 5) {
+            return true;
         }
-    std::cout << "Detected FLUSH\n";
-    return HandRank::FLUSH;
+    }
+
+    return false;
+}
+
+PokerHandType FlushChecker::getHandType() const {
+    return PokerHandType::Flush;
 }

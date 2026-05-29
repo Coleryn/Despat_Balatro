@@ -1,8 +1,10 @@
-// contoh PairChecker.h
 #pragma once
+
 #include "PokerHandChecker.h"
+#include "PokerHandType.h"
 
 class HighCardChecker : public PokerHandChecker {
 public:
-    HandRank check(const Hand& hand) override;
+    bool checkPokerHand(const std::vector<Card>& cards) const override;
+    PokerHandType getHandType() const override;
 };
