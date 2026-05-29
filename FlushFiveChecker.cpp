@@ -1,15 +1,18 @@
 #include "FlushFiveChecker.h"
-#include <iostream>
 
-HandRank FlushFiveChecker::check(const Hand& hand) {
-    if (hand.size() < 5) { if (nextChecker) return nextChecker->check(hand); return HandRank::UNKNOWN; }
-    int rank = hand.getCard(0).rank;
-    char suit = hand.getCard(0).suit;
-    for (int i = 1; i < hand.size(); i++)
-        if (hand.getCard(i).rank != rank || hand.getCard(i).suit != suit) {
-            if (nextChecker) return nextChecker->check(hand);
-            return HandRank::UNKNOWN;
-        }
-    std::cout << "Detected FLUSH FIVE\n";
-    return HandRank::FLUSH_FIVE;
+#include "FiveOfAKindChecker.h"
+#include "FlushChecker.h"
+
+bool FlushFiveChecker::checkPokerHand(const std::vector<Card>& cards) const {
+    if (cards.size() != 5) {
+        return false;
+    }
+
+    FiveOfAKindChecker fiveOfAKindChecker;
+    FlushChecker flushChecker;
+    return fiveOfAKindChecker.checkPokerHand(cards) && flushChecker.checkPokerHand(cards);
+}
+
+PokerHandType FlushFiveChecker::getHandType() const {
+    return PokerHandType::FlushFive;
 }

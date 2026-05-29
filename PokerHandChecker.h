@@ -1,12 +1,11 @@
 #pragma once
-#include "Hand.h"
-#include "HandRank.h"
+#include <vector>
+#include "Card.h"
+#include "PokerHandType.h"
 
 class PokerHandChecker {
 public:
-    virtual HandRank check(const Hand& hand) = 0;
-    void setNext(PokerHandChecker* next);
-
-protected:
-    PokerHandChecker* nextChecker = nullptr;
+    virtual ~PokerHandChecker() = default;
+    virtual bool checkPokerHand(const std::vector<Card>& cards) const = 0;
+    virtual PokerHandType getHandType() const = 0;
 };

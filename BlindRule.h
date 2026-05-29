@@ -1,5 +1,6 @@
-#pragma once 
-class BlindRule{ 
-public: 
- bool checkBlind(int score); 
+#pragma once
+
+class BlindRule {
+public:
+    bool isCleared(int score, int requiredScore) const;
 };
