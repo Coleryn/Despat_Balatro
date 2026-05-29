@@ -3,8 +3,10 @@
 #include "ChosenHand.h"
 #include "PlayedHandResult.h"
 #include "ScoreContext.h"
+#include "SmallBlindState.h"
 
 #include <iostream>
+#include <memory>
 #include <vector>
 
 RunSessionService::RunSessionService(GameManager& gm, BlindConfig cfg)
@@ -18,6 +20,14 @@ void RunSessionService::runSession() {
 
 void RunSessionService::initializeSession() {
     gameManager.setupJokers();
+    state.persistent.currentBlind = std::make_unique<SmallBlindState>();
+    enterBlind();
+}
+
+void RunSessionService::enterBlind() {
+    state.runtime.blindScore = 0;
+    state.runtime.remainingPlays = config.remainingPlays;
+    state.runtime.remainingDiscards = config.remainingDiscards;
     state.deck = gameManager.createShuffledDeck();
     state.handState = gameManager.drawInitialHand(state.deck, 8);
 }
@@ -28,6 +38,9 @@ void RunSessionService::runSessionLoop() {
         PlayerActionRequest request = readPlayerActionRequest();
         if (canPerformAction(request.action)) {
             processPlayerAction(request);
+            if (isBlindCleared()) {
+                completeCurrentBlind();
+            }
         } else {
             std::cout << "Cannot perform that action.\n";
         }
@@ -35,8 +48,28 @@ void RunSessionService::runSessionLoop() {
 }
 
 bool RunSessionService::isSessionEnded() {
-    return blindRule.isCleared(state.currentScore, config.minimumScore)
-        || config.remainingPlays == 0;
+    return !isBlindCleared() && state.runtime.remainingPlays == 0;
+}
+
+bool RunSessionService::isBlindCleared() const {
+    const int targetScore = state.persistent.currentBlind->getTargetScore(state.persistent);
+    return state.runtime.blindScore >= targetScore;
+}
+
+void RunSessionService::completeCurrentBlind() {
+    const int rewardMoney = state.persistent.currentBlind->getRewardMoney(state.persistent);
+    const std::string clearedBlindName = state.persistent.currentBlind->getName();
+
+    state.persistent.money += rewardMoney;
+    state.persistent.currentBlind = state.persistent.currentBlind->nextState(state.persistent);
+
+    std::cout << "\nBlind cleared: " << clearedBlindName << "\n";
+    std::cout << "Money gained: " << rewardMoney << "\n";
+    std::cout << "Total money: " << state.persistent.money << "\n";
+    std::cout << "Next ante: " << state.persistent.ante << "\n";
+    std::cout << "Next blind: " << state.persistent.currentBlind->getName() << "\n";
+
+    enterBlind();
 }
 
 PlayerActionRequest RunSessionService::readPlayerActionRequest() {
@@ -50,9 +83,9 @@ PlayerActionRequest RunSessionService::readPlayerActionRequest() {
 
 bool RunSessionService::canPerformAction(PlayerAction action) {
     if (action == PlayerAction::PLAY) {
-        return config.remainingPlays > 0;
+        return state.runtime.remainingPlays > 0;
     } else {
-        return config.remainingDiscards > 0;
+        return state.runtime.remainingDiscards > 0;
     }
 }
 
@@ -70,31 +103,44 @@ void RunSessionService::processPlayAction(const std::vector<int>& selectedIndice
     ScoreContext context = gameManager.createScoreContext(result);
     gameManager.applyJokers(context);
     gameManager.printResult(result, context);
-    state.currentScore += context.getFinalScore();
+    state.runtime.blindScore += context.getFinalScore();
     gameManager.discardAndRedraw(state.handState, state.deck, selectedIndices, 8);
     std::cout << "\nHand after play and redraw:\n";
     gameManager.printCards(state.handState.getCards());
-    config.remainingPlays--;
+    state.runtime.remainingPlays--;
 }
 
 void RunSessionService::processDiscardAction(const std::vector<int>& selectedIndices) {
     gameManager.discardAndRedraw(state.handState, state.deck, selectedIndices, 8);
     std::cout << "\nHand after discard and redraw:\n";
     gameManager.printCards(state.handState.getCards());
-    config.remainingDiscards--;
+    state.runtime.remainingDiscards--;
 }
 
 void RunSessionService::printSessionStatus() {
     gameManager.printGeneratedHand(state.handState);
-    std::cout << "Blind requirement: " << config.minimumScore << "\n";
-    std::cout << "Remaining plays: " << config.remainingPlays << ", Remaining discards: " << config.remainingDiscards << "\n";
-    std::cout << "Current score: " << state.currentScore << "\n";
+    std::cout << "Ante: " << state.persistent.ante << "\n";
+    std::cout << "Blind: " << state.persistent.currentBlind->getName() << "\n";
+    std::cout << "Blind requirement: "
+              << state.persistent.currentBlind->getTargetScore(state.persistent)
+              << "\n";
+    std::cout << "Reward money: "
+              << state.persistent.currentBlind->getRewardMoney(state.persistent)
+              << "\n";
+    std::cout << "Remaining plays: " << state.runtime.remainingPlays
+              << ", Remaining discards: " << state.runtime.remainingDiscards
+              << "\n";
+    std::cout << "Current blind score: " << state.runtime.blindScore << "\n";
 }
 
 void RunSessionService::printSessionResult() {
-    const bool clearedBlind = blindRule.isCleared(state.currentScore, config.minimumScore);
+    const int targetScore = state.persistent.currentBlind->getTargetScore(state.persistent);
+    const bool clearedBlind = isBlindCleared();
 
-    std::cout << "Session ended. Final score: " << state.currentScore << "\n";
-    std::cout << "Blind requirement: " << config.minimumScore << "\n";
+    std::cout << "Session ended. Final score: " << state.runtime.blindScore << "\n";
+    std::cout << "Blind: " << state.persistent.currentBlind->getName() << "\n";
+    std::cout << "Blind requirement: " << targetScore << "\n";
     std::cout << "Result: " << (clearedBlind ? "WIN" : "LOSE") << "\n";
+    std::cout << "Ante: " << state.persistent.ante << "\n";
+    std::cout << "Money: " << state.persistent.money << "\n";
 }

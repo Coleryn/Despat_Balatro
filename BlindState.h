@@ -1,0 +1,19 @@
+#pragma once
+
+#include "RewardCommand.h"
+
+#include <memory>
+#include <string>
+
+struct RunPersistentState;
+
+class BlindState {
+public:
+    virtual ~BlindState() = default;
+
+    virtual std::string getName() const = 0;
+    virtual int getTargetScore(const RunPersistentState& state) const = 0;
+    virtual int getRewardMoney(const RunPersistentState& state) const = 0;
+    virtual std::unique_ptr<BlindState> nextState(RunPersistentState& state) const = 0;
+    virtual std::unique_ptr<RewardCommand> createSkipReward() const = 0;
+};

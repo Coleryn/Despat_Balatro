@@ -1,6 +1,5 @@
 #pragma once
 
-#include "BlindRule.h"
 #include "BlindConfig.h"
 #include "RunSessionState.h"
 #include "PlayerAction.h"
@@ -15,11 +14,13 @@ private:
     GameManager& gameManager;
     BlindConfig config;
     RunSessionState state;
-    BlindRule blindRule;
 
     void initializeSession();
+    void enterBlind();
     void runSessionLoop();
     bool isSessionEnded();
+    bool isBlindCleared() const;
+    void completeCurrentBlind();
     PlayerActionRequest readPlayerActionRequest();
     bool canPerformAction(PlayerAction action);
     void processPlayerAction(const PlayerActionRequest& request);
