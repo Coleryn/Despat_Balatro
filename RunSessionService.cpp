@@ -28,8 +28,8 @@ void RunSessionService::enterBlind() {
     state.runtime.blindScore = 0;
     state.runtime.remainingPlays = config.remainingPlays;
     state.runtime.remainingDiscards = config.remainingDiscards;
-    state.deck = gameManager.createShuffledDeck();
-    state.handState = gameManager.drawInitialHand(state.deck, 8);
+    state.runtime.deck = gameManager.createShuffledDeck();
+    state.runtime.handState = gameManager.drawInitialHand(state.runtime.deck, 8);
 }
 
 void RunSessionService::runSessionLoop() {
@@ -73,8 +73,8 @@ void RunSessionService::completeCurrentBlind() {
 }
 
 PlayerActionRequest RunSessionService::readPlayerActionRequest() {
-    const std::vector<int> selectedIndices = gameManager.readSelectedIndices(state.handState.size(), config.maxSelectedCards);
-    ChosenHand chosenHand = gameManager.createChosenHand(state.handState, selectedIndices);
+    const std::vector<int> selectedIndices = gameManager.readSelectedIndices(state.runtime.handState.size(), config.maxSelectedCards);
+    ChosenHand chosenHand = gameManager.createChosenHand(state.runtime.handState, selectedIndices);
     gameManager.printChosenHand(chosenHand);
     std::string actionStr = gameManager.readPlayerAction();
     PlayerAction action = (actionStr == "PLAY") ? PlayerAction::PLAY : PlayerAction::DISCARD;
@@ -98,27 +98,27 @@ void RunSessionService::processPlayerAction(const PlayerActionRequest& request) 
 }
 
 void RunSessionService::processPlayAction(const std::vector<int>& selectedIndices) {
-    ChosenHand chosenHand = gameManager.createChosenHand(state.handState, selectedIndices);
+    ChosenHand chosenHand = gameManager.createChosenHand(state.runtime.handState, selectedIndices);
     PlayedHandResult result = gameManager.resolveHand(chosenHand);
     ScoreContext context = gameManager.createScoreContext(result);
     gameManager.applyJokers(context);
     gameManager.printResult(result, context);
     state.runtime.blindScore += context.getFinalScore();
-    gameManager.discardAndRedraw(state.handState, state.deck, selectedIndices, 8);
+    gameManager.discardAndRedraw(state.runtime.handState, state.runtime.deck, selectedIndices, 8);
     std::cout << "\nHand after play and redraw:\n";
-    gameManager.printCards(state.handState.getCards());
+    gameManager.printCards(state.runtime.handState.getCards());
     state.runtime.remainingPlays--;
 }
 
 void RunSessionService::processDiscardAction(const std::vector<int>& selectedIndices) {
-    gameManager.discardAndRedraw(state.handState, state.deck, selectedIndices, 8);
+    gameManager.discardAndRedraw(state.runtime.handState, state.runtime.deck, selectedIndices, 8);
     std::cout << "\nHand after discard and redraw:\n";
-    gameManager.printCards(state.handState.getCards());
+    gameManager.printCards(state.runtime.handState.getCards());
     state.runtime.remainingDiscards--;
 }
 
 void RunSessionService::printSessionStatus() {
-    gameManager.printGeneratedHand(state.handState);
+    gameManager.printGeneratedHand(state.runtime.handState);
     std::cout << "Ante: " << state.persistent.ante << "\n";
     std::cout << "Blind: " << state.persistent.currentBlind->getName() << "\n";
     std::cout << "Blind requirement: "

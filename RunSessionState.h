@@ -19,11 +19,11 @@ struct BlindRuntimeState {
     int blindScore = 0;
     int remainingPlays = 3;
     int remainingDiscards = 3;
+    Deck deck;
+    HandState handState;
 };
 
 struct RunSessionState {
     RunPersistentState persistent;
     BlindRuntimeState runtime;
-    Deck deck;
-    HandState handState;
 };
