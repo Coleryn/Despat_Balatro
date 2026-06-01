@@ -10,6 +10,7 @@ public:
 
     void initialize();
     void shuffle();
+    void addCard(const Card& card);
 
     Card drawCard();
 

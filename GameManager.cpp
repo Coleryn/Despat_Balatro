@@ -80,8 +80,21 @@ std::vector<int> GameManager::readSelectedIndices(int handSize, int maxCards) co
     return indices;
 }
 
+BlindSelection GameManager::readBlindSelection() const {
+    std::cout << "\nSelect blind action: (P)lay blind or (S)kip blind: ";
+
+    std::string input;
+    std::getline(std::cin, input);
+
+    if (input == "S" || input == "s" || input == "Skip" || input == "skip") {
+        return BlindSelection::Skip;
+    }
+
+    return BlindSelection::Play;
+}
+
 std::string GameManager::readPlayerAction() const {
-    std::cout << "\nChoose action: (P)lay or (D)iscard: ";
+    std::cout << "\nChoose action: (P)lay hand or (D)iscard: ";
 
     std::string input;
     std::getline(std::cin, input);
@@ -92,7 +105,6 @@ std::string GameManager::readPlayerAction() const {
     if (input == "D" || input == "d" || input == "Discard" || input == "discard") {
         return "DISCARD";
     }
-
     return "INVALID";
 }
 

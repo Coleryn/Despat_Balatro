@@ -1,6 +1,7 @@
 #include "SmallBlindState.h"
 
 #include "BigBlindState.h"
+#include "BonusHandCommand.h"
 #include "RunSessionState.h"
 
 std::string SmallBlindState::getName() const {
@@ -15,10 +16,14 @@ int SmallBlindState::getRewardMoney(const RunPersistentState& state) const {
     return 3 + state.ante;
 }
 
+bool SmallBlindState::canSkip() const {
+    return true;
+}
+
 std::unique_ptr<BlindState> SmallBlindState::nextState(RunPersistentState&) const {
     return std::make_unique<BigBlindState>();
 }
 
 std::unique_ptr<RewardCommand> SmallBlindState::createSkipReward() const {
-    return nullptr;
+    return std::make_unique<BonusHandCommand>();
 }
