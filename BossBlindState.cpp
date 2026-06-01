@@ -15,6 +15,10 @@ int BossBlindState::getRewardMoney(const RunPersistentState& state) const {
     return 5 + state.ante;
 }
 
+bool BossBlindState::canSkip() const {
+    return false;
+}
+
 std::unique_ptr<BlindState> BossBlindState::nextState(RunPersistentState& state) const {
     state.ante++;
     return std::make_unique<SmallBlindState>();

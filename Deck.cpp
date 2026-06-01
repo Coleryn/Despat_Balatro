@@ -49,6 +49,10 @@ void Deck::shuffle() {
     std::shuffle(cards.begin(), cards.end(), generator);
 }
 
+void Deck::addCard(const Card& card) {
+    cards.push_back(card);
+}
+
 Card Deck::drawCard() {
     if (cards.empty()) {
         throw std::out_of_range("Cannot draw from an empty deck");

@@ -11,6 +11,7 @@
 struct RunPersistentState {
     int ante = 1;
     int money = 0;
+    std::vector<Card> extraCards;
     std::vector<std::unique_ptr<RewardCommand>> pendingCommands;
     std::unique_ptr<BlindState> currentBlind;
 };

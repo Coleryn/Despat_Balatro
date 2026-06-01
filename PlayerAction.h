@@ -1,8 +1,11 @@
 #pragma once
 
+#include <vector>
+
 enum class PlayerAction {
     PLAY,
-    DISCARD
+    DISCARD,
+    INVALID
 };
 
 struct PlayerActionRequest {

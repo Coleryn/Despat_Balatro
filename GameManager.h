@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Card.h"
+#include "BlindSelection.h"
 #include "ChosenHand.h"
 #include "Deck.h"
 #include "HandState.h"
@@ -21,6 +22,7 @@ public:
     void printGeneratedHand(const HandState& handState) const;
     void printChosenHand(const ChosenHand& chosenHand) const;
     std::vector<int> readSelectedIndices(int handSize, int maxCards = 5) const;
+    BlindSelection readBlindSelection() const;
     std::string readPlayerAction() const;
     ChosenHand createChosenHand(
         const HandState& handState,
