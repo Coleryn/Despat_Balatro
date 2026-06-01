@@ -1,16 +1,16 @@
 #include "FullHouseChecker.h"
-#include <iostream>
-#include <map>
 
-HandRank FullHouseChecker::check(const Hand& hand) {
-    std::map<int,int> freq;
-    for (int i = 0; i < hand.size(); i++) freq[hand.getCard(i).rank]++;
-    bool hasThree = false, hasTwo = false;
-    for (auto& p : freq) {
-        if (p.second == 3) hasThree = true;
-        if (p.second == 2) hasTwo = true;
+#include "PokerUtils.h"
+
+bool FullHouseChecker::checkPokerHand(const std::vector<Card>& cards) const {
+    if (cards.size() != 5) {
+        return false;
     }
-    if (hasThree && hasTwo) { std::cout << "Detected FULL HOUSE\n"; return HandRank::FULL_HOUSE; }
-    if (nextChecker) return nextChecker->check(hand);
-    return HandRank::UNKNOWN;
+
+    const auto rankCount = countRanks(cards);
+    return hasNOfAKind(rankCount, 3) && hasNOfAKind(rankCount, 2);
+}
+
+PokerHandType FullHouseChecker::getHandType() const {
+    return PokerHandType::FullHouse;
 }
