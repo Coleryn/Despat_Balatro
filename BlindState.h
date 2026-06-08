@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RewardCommand.h"
+#include "PendingCommand.h"
 
 #include <memory>
 #include <string>
@@ -16,5 +16,5 @@ public:
     virtual int getRewardMoney(const RunPersistentState& state) const = 0;
     virtual bool canSkip() const = 0;
     virtual std::unique_ptr<BlindState> nextState(RunPersistentState& state) const = 0;
-    virtual std::unique_ptr<RewardCommand> createSkipReward() const = 0;
+    virtual PendingCommand createSkipRewardCommand() const = 0;
 };

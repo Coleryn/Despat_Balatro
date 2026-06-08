@@ -5,8 +5,8 @@
 FreePlayingCardCommand::FreePlayingCardCommand(Card card)
     : card(card) {}
 
-RewardTiming FreePlayingCardCommand::getTiming() const {
-    return RewardTiming::NextAnte;
+std::string FreePlayingCardCommand::getName() const {
+    return "Free Playing Card";
 }
 
 std::string FreePlayingCardCommand::getDescription() const {

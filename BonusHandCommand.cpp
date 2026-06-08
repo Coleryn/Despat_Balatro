@@ -5,8 +5,8 @@
 BonusHandCommand::BonusHandCommand(int amount)
     : amount(amount) {}
 
-RewardTiming BonusHandCommand::getTiming() const {
-    return RewardTiming::NextBlind;
+std::string BonusHandCommand::getName() const {
+    return "Bonus Hand";
 }
 
 std::string BonusHandCommand::getDescription() const {

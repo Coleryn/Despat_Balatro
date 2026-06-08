@@ -3,7 +3,7 @@
 #include "BlindState.h"
 #include "Deck.h"
 #include "HandState.h"
-#include "RewardCommand.h"
+#include "PendingCommand.h"
 
 #include <memory>
 #include <vector>
@@ -12,7 +12,7 @@ struct RunPersistentState {
     int ante = 1;
     int money = 0;
     std::vector<Card> extraCards;
-    std::vector<std::unique_ptr<RewardCommand>> pendingCommands;
+    std::vector<PendingCommand> pendingCommands;
     std::unique_ptr<BlindState> currentBlind;
 };
 

@@ -11,14 +11,16 @@ void RewardCommandExecutor::executeCommandsForTiming(
     auto& commands = state.persistent.pendingCommands;
 
     for (auto it = commands.begin(); it != commands.end();) {
-        RewardCommand& command = **it;
-        if (command.getTiming() != timing) {
+        PendingCommand& pending = *it;
+        if (pending.executed || pending.timing != timing || !pending.command) {
             ++it;
             continue;
         }
 
-        std::cout << "Executing reward: " << command.getDescription() << "\n";
-        command.execute(state);
+        std::cout << "Executing reward: "
+                  << pending.command->getDescription() << "\n";
+        pending.command->execute(state);
+        pending.executed = true;
         it = commands.erase(it);
     }
 }
