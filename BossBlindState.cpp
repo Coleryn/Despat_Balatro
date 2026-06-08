@@ -24,6 +24,10 @@ std::unique_ptr<BlindState> BossBlindState::nextState(RunPersistentState& state)
     return std::make_unique<SmallBlindState>();
 }
 
-std::unique_ptr<RewardCommand> BossBlindState::createSkipReward() const {
-    return nullptr;
+PendingCommand BossBlindState::createSkipRewardCommand() const {
+    return {
+        RewardTiming::Start,
+        true,
+        nullptr
+    };
 }

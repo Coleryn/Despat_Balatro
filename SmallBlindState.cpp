@@ -24,6 +24,10 @@ std::unique_ptr<BlindState> SmallBlindState::nextState(RunPersistentState&) cons
     return std::make_unique<BigBlindState>();
 }
 
-std::unique_ptr<RewardCommand> SmallBlindState::createSkipReward() const {
-    return std::make_unique<BonusHandCommand>();
+PendingCommand SmallBlindState::createSkipRewardCommand() const {
+    return {
+        RewardTiming::NextBlind,
+        false,
+        std::make_unique<BonusHandCommand>()
+    };
 }

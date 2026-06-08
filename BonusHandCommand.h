@@ -6,7 +6,7 @@ class BonusHandCommand : public RewardCommand {
 public:
     explicit BonusHandCommand(int amount = 1);
 
-    RewardTiming getTiming() const override;
+    std::string getName() const override;
     std::string getDescription() const override;
     void execute(RunSessionState& state) override;
 

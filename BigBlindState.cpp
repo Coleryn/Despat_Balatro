@@ -24,6 +24,10 @@ std::unique_ptr<BlindState> BigBlindState::nextState(RunPersistentState&) const 
     return std::make_unique<BossBlindState>();
 }
 
-std::unique_ptr<RewardCommand> BigBlindState::createSkipReward() const {
-    return std::make_unique<FreePlayingCardCommand>();
+PendingCommand BigBlindState::createSkipRewardCommand() const {
+    return {
+        RewardTiming::NextAnte,
+        false,
+        std::make_unique<FreePlayingCardCommand>()
+    };
 }

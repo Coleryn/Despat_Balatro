@@ -174,13 +174,13 @@ void RunSessionService::processSkipAction() {
         return;
     }
 
-    std::unique_ptr<RewardCommand> reward =
-        state.persistent.currentBlind->createSkipReward();
+    PendingCommand pendingReward =
+        state.persistent.currentBlind->createSkipRewardCommand();
 
-    if (reward) {
+    if (pendingReward.command) {
         std::cout << "\nSkip reward stored: "
-                  << reward->getDescription() << "\n";
-        state.persistent.pendingCommands.push_back(std::move(reward));
+                  << pendingReward.command->getDescription() << "\n";
+        state.persistent.pendingCommands.push_back(std::move(pendingReward));
     }
 
     std::cout << "Skipped blind: "
@@ -200,8 +200,10 @@ void RunSessionService::printBlindSelectionStatus() {
               << "\n";
     std::cout << "Pending rewards: "
               << state.persistent.pendingCommands.size() << "\n";
-    for (const auto& command : state.persistent.pendingCommands) {
-        std::cout << "- " << command->getDescription() << "\n";
+    for (const PendingCommand& pending : state.persistent.pendingCommands) {
+        if (pending.command) {
+            std::cout << "- " << pending.command->getDescription() << "\n";
+        }
     }
 }
 
@@ -221,8 +223,10 @@ void RunSessionService::printSessionStatus() {
     std::cout << "Current blind score: " << state.runtime.blindScore << "\n";
     std::cout << "Pending rewards: "
               << state.persistent.pendingCommands.size() << "\n";
-    for (const auto& command : state.persistent.pendingCommands) {
-        std::cout << "- " << command->getDescription() << "\n";
+    for (const PendingCommand& pending : state.persistent.pendingCommands) {
+        if (pending.command) {
+            std::cout << "- " << pending.command->getDescription() << "\n";
+        }
     }
     std::cout << "Extra deck cards: "
               << state.persistent.extraCards.size() << "\n";
